@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import md5 from "js-md5";
 
 const SelectButton = ({ setFile, setFileId }) => {
@@ -17,6 +17,7 @@ const InputField = ({ description, setDescription }) => {
 };
 
 const UploadButton = ({ file, setFile, description, setDescription, setFileId }) => {
+  // submitHandler -> validateFile -> readImageFile -> uploadImageMetadata -> uploadImageFile
   const validateFile = (file) => {
     if (!file) {
       window.alert("Please provide an image to upload.");
@@ -50,14 +51,14 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
     });
   };
 
-  const uploadImage = async (file, description) => {
+  const uploadImageMatadata = async (file, description) => {
     const hash = md5.base64(await readImageFile(file));
 
     const image = new Image();
     image.src = URL.createObjectURL(file);
     await image.decode();
 
-    const response = await fetch("/api/upload", {
+    const response = await fetch("/api/image/preupload", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,13 +70,13 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
 
     if (response.ok) {
       const { url, fields, imageId } = await response.json();
-      await uploadToBucket(url, fields, file, imageId);
+      await uploadImageFile(url, fields, file, imageId);
     } else {
       window.alert("Upload failed.");
     }
   };
 
-  const uploadToBucket = async (url, fields, file, imageId) => {
+  const uploadImageFile = async (url, fields, file, imageId) => {
     const formData = new FormData();
     for (const key in fields) {
       formData.append(key, fields[key]);
@@ -87,50 +88,27 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
       method: "POST",
       body: formData,
     }).catch((error) => {
+      window.alert("Upload failed.");
       console.error(error);
     });
 
-    if (response.ok) {
-      window.alert("Upload successful.");
-      setFile(null);
-      setDescription("");
-      setFileId(imageId);
-    } else {
+    if (!response.ok) {
       window.alert("Upload failed.");
+      return;
     }
+    window.alert("Upload successful.");
+    setFile(null);
+    setDescription("");
+    setFileId(imageId);
   };
 
   const submitHandler = async () => {
     if (validateFile(file)) {
-      await uploadImage(file, description);
+      await uploadImageMatadata(file, description);
     }
   };
 
   return <button onClick={submitHandler}>Submit</button>;
 };
 
-const UploadForm = ({ setFileId }) => {
-  const [file, setFile] = useState(null);
-  const [description, setDescription] = useState("");
-
-  return (
-    <div className="App-Form">
-      <SelectButton setFile={setFile} setFileId={setFileId} />
-      {file && (
-        <div className="App-container">
-          <img src={URL.createObjectURL(file)} alt="Preview" />
-          <InputField file={file} description={description} setDescription={setDescription} />
-          <UploadButton
-            file={file}
-            setFile={setFile}
-            description={description}
-            setDescription={setDescription}
-            setFileId={setFileId}
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-
-export { SelectButton, InputField, UploadButton, UploadForm };
+export { SelectButton, InputField, UploadButton };

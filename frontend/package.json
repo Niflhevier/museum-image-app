@@ -1,11 +1,13 @@
 {
-  "name": "image-uploader-app",
+  "name": "image-app-frontend",
   "version": "0.1.0",
   "private": true,
   "author": "Long Liangmao",
   "license": "MIT",
   "proxy": "http://localhost:3001",
   "dependencies": {
+    "html5-qrcode": "^2.3.8",
+    "jquery": "^3.7.1",
     "js-md5": "^0.8.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -35,8 +37,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "html5-qrcode": "^2.3.8"
   }
 }

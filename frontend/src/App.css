@@ -1,0 +1,212 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Open Sans";
+}
+
+.App-Form {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.App-Scan {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin: 0.75rem;
+}
+
+h3 {
+  margin: 0.75rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  margin: 0.75rem;
+  max-width: 75%;
+}
+
+.qrcode-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  margin: 0.75rem;
+  max-width: 75%;
+}
+
+input {
+  max-width: 100%;
+  display: block;
+  margin: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+input::file-selector-button {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+button {
+  cursor: pointer;
+  margin: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+img {
+  max-width: 75%;
+  max-height: 1000px;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 0.75rem;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+  margin: 0.75rem;
+  padding: 0.5rem;
+}
+
+#reader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none !important;
+  padding: 0.25rem 1rem 0 1rem !important;
+}
+
+#reader #reader__dashboard {
+  margin: 0.75rem 0.75rem 0 0.75rem !important;
+}
+
+hr {
+  border: 2px solid #ccc;
+  margin: 0.75rem;
+  border-radius: 0.5rem;
+  width: 75%;
+}
+
+hr::after {
+  border: none;
+  content: "";
+}
+
+a {
+  color: inherit;
+}
+
+nav {
+  top: 0%;
+  width: 100%;
+}
+
+.nav-container ul {
+  padding: 0;
+}
+
+.nav-container ul li {
+  list-style: none;
+  margin: 0.25rem;
+  display: inline-block;
+}
+
+.nav-container ul li a:hover {
+  padding: 15px;
+  color: coral;
+}
+
+.nav-container ul li a {
+  margin: 8px;
+  padding: 10px;
+  color: #000;
+  font-size: 1.2em;
+  text-decoration: none;
+  -webkit-transition: all 0.25s ease;
+  -moz-transition: all 0.25s ease;
+  -o-transition: all 0.25s ease;
+  -ms-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+}
+
+.active {
+  border-bottom: 2px solid #d0d7d9;
+}
+
+.nav-container p {
+  margin-bottom: 16px;
+  color: #fc0;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+@-webkit-keyframes SHOW-BOX {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes SHOW-BOX {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-o-keyframes SHOW-BOX {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes SHOW-BOX {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.show {
+  -webkit-animation: SHOW-BOX 0.5s ease;
+  -moz-animation: SHOW-BOX 0.5s ease;
+  -o-animation: SHOW-BOX 0.5s ease;
+  animation: SHOW-BOX 0.5s ease;
+}
+
+.hide {
+  display: none;
+  -webkit-animation: SHOW-BOX 0.5s ease;
+  -moz-animation: SHOW-BOX 0.5s ease;
+  -o-animation: SHOW-BOX 0.5s ease;
+  animation: SHOW-BOX 0.5s ease;
+}
