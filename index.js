@@ -92,7 +92,6 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     query: query,
   });
 
-  console.log(result);
   res.json({ result: result.hits.hits.map((hit) => hit._source) });
 });
 
