@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const DisplayImageById = ({ id }) => {
+const DisplayImageById = ({ id, showPanel }) => {
   const [image, setImage] = useState(null);
   const [msg, setMsg] = useState("Loading...");
   const [description, setDescription] = useState("");
@@ -8,7 +8,7 @@ const DisplayImageById = ({ id }) => {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await fetch(`/api/img/${id}`);
+        const response = await fetch(`/api/v1/img/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch image");
         }
@@ -24,7 +24,6 @@ const DisplayImageById = ({ id }) => {
         setImage(URL.createObjectURL(imageData));
         setMsg("");
         setDescription(description);
-        console.log(description.length);
       } catch (error) {
         console.error(error);
         setMsg("Failed to get the image. The image may not exist.");
@@ -35,15 +34,15 @@ const DisplayImageById = ({ id }) => {
   }, [id]);
 
   return (
-    <div>
+    <div className="image-with-description">
       {image && <img src={image} alt="ID" />}
-      {description && description.length !== 0 && (
+      {showPanel && description && description.length !== 0 && (
         <div>
           <h3>Level description</h3>
           <p>{description}</p>
         </div>
       )}
-      {msg && <p>{msg}</p>}
+      {showPanel && msg && <p>{msg}</p>}
     </div>
   );
 };
