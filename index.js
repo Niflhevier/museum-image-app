@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const { createPresignedPostUrl, createPresignedGetUrl } = require("./modules/s3");
 const { collection } = require("./modules/mongo");
+const elasticClient = require("./modules/elastic-client");
 const { ObjectId } = require("mongodb");
 
 const express = require("express");
@@ -10,7 +11,7 @@ const path = require("path");
 
 app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 
-app.post("/api/image/preupload", express.json(), async (req, res) => {
+app.post("/api/img/upload", express.json(), async (req, res) => {
   const { md5, description, dimensions } = req.body;
   const Id = new ObjectId();
 
@@ -39,7 +40,7 @@ app.post("/api/image/preupload", express.json(), async (req, res) => {
   }
 });
 
-app.get("/api/image/:id", async (req, res) => {
+app.get("/api/img/:id", async (req, res) => {
   try {
     const Id = new ObjectId(req.params.id);
 
@@ -58,6 +59,10 @@ app.get("/api/image/:id", async (req, res) => {
     console.error("Error:", err.message);
     return res.status(404).json({ error: "Image not found!" });
   }
+});
+
+app.post("/api/img/search", express.json(), async (req, res) => {
+  
 });
 
 app.get("*", (req, res) => {

@@ -58,7 +58,7 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
     image.src = URL.createObjectURL(file);
     await image.decode();
 
-    const response = await fetch("/api/image/preupload", {
+    const response = await fetch("/api/img/upload", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

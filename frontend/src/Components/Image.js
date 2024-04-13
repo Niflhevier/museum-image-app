@@ -8,7 +8,7 @@ const DisplayImageById = ({ id }) => {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await fetch(`/api/image/${id}`);
+        const response = await fetch(`/api/img/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch image");
         }
