@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const { createPresignedPostUrl, createPresignedGetUrl } = require("./modules/s3");
 const { collection } = require("./modules/mongo");
 const elasticClient = require("./modules/elastic-client");

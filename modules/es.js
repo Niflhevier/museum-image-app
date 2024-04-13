@@ -1,6 +1,6 @@
 const { Client } = require("@elastic/elasticsearch");
 
-require("dotenv").config({ path: ".elastic.env" });
+require("dotenv").config({ path: "../.env/elastic.env" });
 
 // https://www.elastic.co/guide/en/enterprise-search/current/mongodb-start.html
 

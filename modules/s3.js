@@ -2,7 +2,7 @@ const { S3Client, HeadObjectCommand, GetObjectCommand } = require("@aws-sdk/clie
 const { createPresignedPost } = require("@aws-sdk/s3-presigned-post");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-require("dotenv").config({ path: ".elastic.env" });
+require("dotenv").config({ path: "../.env/elastic.env" });
 
 const BucketName = process.env.AWS_BUCKET_NAME;
 const s3Client = new S3Client({
