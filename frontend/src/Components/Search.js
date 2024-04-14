@@ -11,15 +11,10 @@ const SearchButton = ({ searchDescription, setSearchResult }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Search failed.");
-      }
-
-      const { result } = await response.json();
-
-      if (!result) {
         throw new Error("No result found.");
       }
 
+      const { result } = await response.json();
       setSearchResult(result);
     } catch (error) {
       window.alert(error.message);
