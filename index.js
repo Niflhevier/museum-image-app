@@ -71,8 +71,8 @@ app.get("/api/v1/img/:id", async (req, res) => {
     } catch (err) {
       console.error("Elasticsearch Deletion Error:", err.message);
     }
-
-    throw new Error("Failed to generate presigned URL!");
+    res.status(404).json({ error: "Image not found!" });
+    return;
   }
 
   res.json({ url, ...query });
