@@ -13,7 +13,6 @@ app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 
 app.post("/api/v1/upload", express.json(), async (req, res) => {
   const { hash, description, dimensions } = req.body;
-  const objectId = new ObjectId();
 
   if (
     typeof hash !== "string" ||
@@ -25,14 +24,11 @@ app.post("/api/v1/upload", express.json(), async (req, res) => {
     return res.status(400).json({ error: "Invalid request body!" });
   }
 
-  const document = {
-    _id: objectId,
-    description,
-    dimensions: [dimensions.width, dimensions.height],
-  };
+  const objectId = new ObjectId();
+  const metadata = { description, dimensions: [dimensions.width, dimensions.height] };
 
   try {
-    await collection.insertOne(document);
+    await collection.insertOne({ _id: objectId, ...metadata });
   } catch (err) {
     console.error("MongoDB Error:", err.message);
     return res.status(400).json({ error: "MongoDB Insert Error!" });
@@ -42,7 +38,7 @@ app.post("/api/v1/upload", express.json(), async (req, res) => {
     await elasticClient.index({
       index: "mongo-images-metadata",
       id: objectId.toString(),
-      body: document,
+      body: { id: objectId.toString(), ...metadata },
     });
   } catch (err) {
     console.error("Elasticsearch Error:", err.message);
@@ -94,19 +90,19 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
   const query =
     description === ""
       ? {
-          bool: {
-            must: { exists: { field: "description" } },
-            must_not: [{ wildcard: { description: "*" } }],
-          },
-        }
+        bool: {
+          must: { exists: { field: "description" } },
+          must_not: [{ wildcard: { description: "*" } }],
+        },
+      }
       : {
-          bool: {
-            should: [
-              { match: { description: description } },
-              { fuzzy: { description: { value: description, fuzziness: "AUTO" } } },
-            ],
-          },
-        };
+        bool: {
+          should: [
+            { match: { description: description } },
+            { fuzzy: { description: { value: description, fuzziness: "AUTO" } } },
+          ],
+        },
+      };
 
   const result = await elasticClient.search({
     index: "mongo-images-metadata",
