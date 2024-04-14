@@ -60,21 +60,19 @@ app.get("/api/v1/img/:id", async (req, res) => {
 
   const url = await createPresignedGetUrl(Id);
   if (!url) {
+    console.info(Id.toString(), "not found in S3, deleting from MongoDB and Elasticsearch.");
     try {
       await collection.deleteOne({ _id: Id });
     } catch (err) {
       console.error("MongoDB Deletion Error:", err.message);
     }
-
     try {
       await elasticClient.delete({ index: "mongo-images-metadata", id: Id.toString() });
     } catch (err) {
       console.error("Elasticsearch Deletion Error:", err.message);
     }
-    res.status(404).json({ error: "Image not found!" });
-    return;
+    return res.status(404).json({ error: "Image not found!" });
   }
-
   res.json({ url, ...query });
 });
 
