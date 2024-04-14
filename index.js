@@ -70,7 +70,7 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
   // check if the file exists in S3 from the search result
   const hits = await Promise.all(result.hits.hits.map(async (hit) => {
     const exists = await checkFileExists(hit._source.id);
-    if (!exists) { await deleteById(hit._source.id) };
+    if (!exists) { await deleteByObjectId(hit._source.id) };
     return exists ? hit._source : null;
   })).then(results => results.filter(hit => hit));
 

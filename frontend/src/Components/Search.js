@@ -16,8 +16,6 @@ const SearchButton = ({ searchDescription, setSearchResult }) => {
 
       const { result } = await response.json();
 
-      console.log(result);
-      
       if (!result) {
         throw new Error("No result found.");
       }
