@@ -74,6 +74,10 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     return exists ? hit._source : null;
   })).then(results => results.filter(hit => hit));
 
+  if (hits.length === 0) {
+    return res.status(404).json({ error: "No result found!" });
+  }
+
   res.json({ result: hits });
 });
 
