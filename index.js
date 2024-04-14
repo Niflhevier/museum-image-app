@@ -18,47 +18,68 @@ app.post("/api/v1/upload", express.json(), async (req, res) => {
   if (
     typeof hash !== "string" ||
     typeof description !== "string" ||
-    typeof dimensions !== "object" ||
-    typeof dimensions.width !== "number" ||
-    typeof dimensions.height !== "number" ||
+    !dimensions ||
     dimensions.width <= 0 ||
     dimensions.height <= 0
   ) {
     return res.status(400).json({ error: "Invalid request body!" });
   }
 
+  const document = {
+    _id: objectId,
+    description,
+    dimensions: [dimensions.width, dimensions.height],
+  };
+
   try {
-    await collection.insertOne({
-      _id: objectId,
-      description,
-      dimensions: [dimensions.width, dimensions.height],
-    });
-    res.json(await createPresignedPostUrl(objectId.toString(), hash));
+    await collection.insertOne(document);
   } catch (err) {
-    console.error("Error:", err.message);
-    res.status(400).json({ error: "DB Insert Error!" });
+    console.error("MongoDB Error:", err.message);
+    return res.status(400).json({ error: "MongoDB Insert Error!" });
   }
+
+  try {
+    await elasticClient.index({
+      index: "mongo-images-metadata",
+      id: objectId.toString(),
+      body: document,
+    });
+  } catch (err) {
+    console.error("Elasticsearch Error:", err.message);
+    try {
+      await collection.deleteOne({ _id: objectId });
+    } catch (err) {
+      console.error("MongoDB Deletion Error:", err.message);
+    }
+    return res.status(400).json({ error: "Elasticsearch Index Error!" });
+  }
+
+  res.json(await createPresignedPostUrl(objectId.toString(), hash));
 });
 
 app.get("/api/v1/img/:id", async (req, res) => {
-  try {
-    const Id = new ObjectId(req.params.id);
+  const Id = new ObjectId(req.params.id);
+  const query = await collection.findOne({ _id: Id });
+  if (!query) return res.status(404).json({ error: "Image not found!" });
 
-    const query = await collection.findOne({ _id: Id });
-    if (!query) {
-      throw new Error("Image not found!");
-    }
-    const url = await createPresignedGetUrl(Id);
-    if (!url) {
+  const url = await createPresignedGetUrl(Id);
+  if (!url) {
+    try {
       await collection.deleteOne({ _id: Id });
-      throw new Error("Failed to generate presigned URL!");
+    } catch (err) {
+      console.error("MongoDB Deletion Error:", err.message);
     }
 
-    res.json({ url, ...query });
-  } catch (err) {
-    console.error("Error:", err.message);
-    return res.status(404).json({ error: "Image not found!" });
+    try {
+      await elasticClient.delete({ index: "mongo-images-metadata", id: Id.toString() });
+    } catch (err) {
+      console.error("Elasticsearch Deletion Error:", err.message);
+    }
+
+    throw new Error("Failed to generate presigned URL!");
   }
+
+  res.json({ url, ...query });
 });
 
 app.post("/api/v1/search", express.json(), async (req, res) => {

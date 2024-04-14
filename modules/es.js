@@ -14,6 +14,4 @@ const elasticClient = new Client({
   },
 });
 
-
-
 module.exports = elasticClient;

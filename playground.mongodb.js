@@ -26,17 +26,3 @@ db.createCollection("metadata", {
   },
   validationAction: "error",
 });
-
-db.createUser({
-  user: "metadataManager",
-  pwd: "fzZTTSvHzfrCv7",
-  roles: [
-    {
-      role: "readWrite",
-      db: "images",
-    }
-  ],
-});
-
-// insert one sample to collection
-
