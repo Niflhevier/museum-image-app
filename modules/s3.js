@@ -35,18 +35,25 @@ const createPresignedPostUrl = async (id, hash) => {
   return { url, fields, id };
 };
 
-const createPresignedGetUrl = async (id) => {
-  const Key = `imgs/${id}.png`;
-
+const checkFileExists = async (idString) => {
+  const Key = `imgs/${idString}.png`;
   try {
     const data = await s3Client.send(new HeadObjectCommand({ Bucket: BucketName, Key }));
     if (data.$metadata.httpStatusCode === 200) {
-      return await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: BucketName, Key }), { expiresIn: 300 });
+      return true;
     }
   } catch (err) {
-    return null;
+    return false;
   }
-  return null;
+  return false;
 };
 
-module.exports = { createPresignedPostUrl, createPresignedGetUrl };
+const createPresignedGetUrl = async (idString) => {
+  const Key = `imgs/${idString}.png`;
+  if (!(await checkFileExists(idString))) {
+    return null;
+  }
+  return await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: BucketName, Key }));
+};
+
+module.exports = { createPresignedPostUrl, createPresignedGetUrl, checkFileExists };
