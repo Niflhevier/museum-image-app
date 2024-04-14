@@ -30,7 +30,12 @@ const ImageFromID = ({ id, verbose }) => {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const { url, description } = await (await fetch(`/api/v1/img/${id}`)).json();
+        const response = await fetch(`/api/v1/img/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to get the presigned URL when fetching the image.");
+        }
+
+        const { url, description } = await response.json();
         const data = await (await fetch(url)).blob();
 
         if (!data.type.startsWith("image/")) {
@@ -39,7 +44,6 @@ const ImageFromID = ({ id, verbose }) => {
         setFile(data);
         setDescription(description);
       } catch (error) {
-        // may acknowledge the server that the image is not found
         console.error(error);
         setDescription("Failed to get the image. The image may not exist.");
       }
