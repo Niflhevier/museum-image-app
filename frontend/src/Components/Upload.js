@@ -4,6 +4,9 @@ import md5 from "js-md5";
 const SelectFileButton = ({ setFile, setFileId }) => {
   const fileChangedHandler = async (event) => {
     const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
 
     const image = new Image();
     image.src = URL.createObjectURL(file);
