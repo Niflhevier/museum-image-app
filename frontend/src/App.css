@@ -246,3 +246,7 @@ nav {
   border-radius: 0.5rem;
   padding: 0.5rem;
 }
+
+#reader > div:nth-child(1) > img {
+  display: none;
+}
