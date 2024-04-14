@@ -12,11 +12,11 @@ const path = require("path");
 app.use(express.static(path.resolve(__dirname, "./frontend/build")));
 
 app.post("/api/v1/upload", express.json(), async (req, res) => {
-  const { md5, description, dimensions } = req.body;
-  const Id = new ObjectId();
+  const { hash, description, dimensions } = req.body;
+  const objectId = new ObjectId();
 
   if (
-    typeof md5 !== "string" ||
+    typeof hash !== "string" ||
     typeof description !== "string" ||
     typeof dimensions !== "object" ||
     typeof dimensions.width !== "number" ||
@@ -29,11 +29,11 @@ app.post("/api/v1/upload", express.json(), async (req, res) => {
 
   try {
     await collection.insertOne({
-      _id: Id,
+      _id: objectId,
       description,
       dimensions: [dimensions.width, dimensions.height],
     });
-    res.json(await createPresignedPostUrl(Id.toString(), md5));
+    res.json(await createPresignedPostUrl(objectId.toString(), hash));
   } catch (err) {
     console.error("Error:", err.message);
     res.status(400).json({ error: "DB Insert Error!" });

@@ -14,12 +14,12 @@ const s3Client = new S3Client({
 });
 
 // https://medium.com/@Games24x7Tech/a-complete-guide-to-s3-file-upload-using-pre-signed-post-urls-9cb2d6cfc0ab
-const createPresignedPostUrl = async (Id, md5) => {
-  const Key = `imgs/${Id}.png`;
+const createPresignedPostUrl = async (id, hash) => {
+  const Key = `imgs/${id}.png`;
   const Conditions = [
     { bucket: BucketName },
     { key: Key },
-    { "Content-Md5": md5 },
+    { "Content-Md5": hash },
     ["content-length-range", 1024, 5242880],
     ["eq", "$Content-Type", "image/png"],
   ];
@@ -28,15 +28,15 @@ const createPresignedPostUrl = async (Id, md5) => {
     Bucket: BucketName,
     Key,
     Conditions,
-    Fields: { "Content-Md5": md5 },
+    Fields: { "Content-Md5": hash },
     Expires: 300,
   });
 
-  return { url, fields, imageId: Id };
+  return { url, fields, id };
 };
 
-const createPresignedGetUrl = async (Id) => {
-  const Key = `imgs/${Id}.png`;
+const createPresignedGetUrl = async (id) => {
+  const Key = `imgs/${id}.png`;
 
   try {
     const data = await s3Client.send(new HeadObjectCommand({ Bucket: BucketName, Key }));

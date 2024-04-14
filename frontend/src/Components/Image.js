@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const DisplayImageById = ({ id, showPanel }) => {
+const ImageFromUrl = ({ id, verbose }) => {
   const [image, setImage] = useState(null);
   const [msg, setMsg] = useState("Loading...");
   const [description, setDescription] = useState("");
@@ -8,25 +8,21 @@ const DisplayImageById = ({ id, showPanel }) => {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await fetch(`/api/v1/img/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch image");
-        }
-        const { url, description } = await response.json();
+        const { url, description } = await (await fetch(`/api/v1/img/${id}`)).json();
+        const data = await (await fetch(url)).blob();
 
-        const imageResponse = await fetch(url);
-        if (!imageResponse.ok) {
-          throw new Error("Failed to fetch image");
+        if (!data.type.startsWith("image/")) {
+          throw new Error("The fetched file is not an image.");
         }
 
-        const imageData = await imageResponse.blob();
-
-        setImage(URL.createObjectURL(imageData));
+        setImage(URL.createObjectURL(data));
         setMsg("");
         setDescription(description);
       } catch (error) {
         console.error(error);
         setMsg("Failed to get the image. The image may not exist.");
+      } finally {
+        return () => URL.revokeObjectURL(image);
       }
     };
 
@@ -36,15 +32,15 @@ const DisplayImageById = ({ id, showPanel }) => {
   return (
     <div className="image-with-description">
       {image && <img src={image} alt="ID" />}
-      {showPanel && description && description.length !== 0 && (
+      {verbose && description && (
         <div>
           <h3>Level description</h3>
           <p>{description}</p>
         </div>
       )}
-      {showPanel && msg && <p>{msg}</p>}
+      {verbose && msg && <p>{msg}</p>}
     </div>
   );
 };
 
-export { DisplayImageById };
+export { ImageFromUrl };

@@ -1,24 +1,25 @@
-const SearchButton = ({ searchDescription, setSearchResult}) => {
+const SearchButton = ({ searchDescription, setSearchResult }) => {
   const searchHandler = async () => {
-    const response = await fetch("/api/v1/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ description: searchDescription }),
-    }).catch((error) => {
-      console.error(error);
-    });
+    try {
+      const response = await fetch("/api/v1/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: searchDescription }),
+      });
 
-    if (response.ok) {
-      const { result } = await response.json();
-      if (result.length === 0) {
-        window.alert("No result found.");
-        return;
+      if (!response.ok) {
+        throw new Error("Search failed.");
       }
+
+      const { result } = await response.json();
+      
+      if (!result) {
+        throw new Error("No result found.");
+      }
+
       setSearchResult(result);
-    } else {
-      window.alert("Search failed.");
+    } catch (error) {
+      window.alert(error.message);
     }
   };
 
