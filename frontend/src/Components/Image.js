@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-const ImageFromUrl = ({ id, verbose }) => {
+const PreviewImage = ({ file }) => {
   const [image, setImage] = useState(null);
-  const [msg, setMsg] = useState("Loading...");
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img
+      .decode()
+      .then(() => setImage(img.src))
+      .catch(console.error);
+    return () => URL.revokeObjectURL(img.src);
+  }, [file]);
+
+  return <img src={image} alt="" />;
+};
+
+const ImageFromUrl = ({ id, verbose }) => {
+  const [file, setFile] = useState(null);
   const [description, setDescription] = useState("");
 
   useEffect(() => {
@@ -14,15 +29,12 @@ const ImageFromUrl = ({ id, verbose }) => {
         if (!data.type.startsWith("image/")) {
           throw new Error("The fetched file is not an image.");
         }
-
-        setImage(URL.createObjectURL(data));
-        setMsg("");
+        setFile(data);
         setDescription(description);
       } catch (error) {
+        // May acknowledge the server that the image is not found
         console.error(error);
-        setMsg("Failed to get the image. The image may not exist.");
-      } finally {
-        return () => URL.revokeObjectURL(image);
+        setDescription("Failed to get the image. The image may not exist.");
       }
     };
 
@@ -30,17 +42,12 @@ const ImageFromUrl = ({ id, verbose }) => {
   }, [id]);
 
   return (
-    <div className="image-with-description">
-      {image && <img src={image} alt="ID" />}
-      {verbose && description && (
-        <div>
-          <h3>Level description</h3>
-          <p>{description}</p>
-        </div>
-      )}
-      {verbose && msg && <p>{msg}</p>}
+    <div>
+      {file && <PreviewImage file={file} />}
+      {verbose && file && <h3>Level description</h3>}
+      {verbose && description && <p>{description}</p>}
     </div>
   );
 };
 
-export { ImageFromUrl };
+export { PreviewImage, ImageFromUrl };

@@ -1,19 +1,27 @@
 import React from "react";
 import md5 from "js-md5";
 
-const SelectButton = ({ setFile, setFileId }) => {
-  const fileChangedHandler = (event) => {
-    setFile(event.target.files[0]);
-    setFileId("");
-  };
-  return <input type="file" accept="image/png" onChange={fileChangedHandler} />;
-};
+const SelectFileButton = ({ setFile, setFileId }) => {
+  const fileChangedHandler = async (event) => {
+    const file = event.target.files[0];
 
-const InputField = ({ description, setDescription }) => {
-  const descriptionChangeHandler = (event) => {
-    setDescription(event.target.value);
+    const image = new Image();
+    image.src = URL.createObjectURL(file);
+
+    // avoid selecting fake .png files
+    try {
+      await image.decode();
+      setFile(file);
+    } catch (error) {
+      window.alert("Please provide a valid image to upload.");
+      setFile(null);
+    } finally {
+      URL.revokeObjectURL(image.src);
+      setFileId("");
+    }
   };
-  return <input type="text" placeholder="Level Description" value={description} onChange={descriptionChangeHandler} />;
+
+  return <input type="file" accept="image/png" onChange={fileChangedHandler} />;
 };
 
 const readFileBuffer = (file) =>
@@ -87,7 +95,7 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
       const fileBuffer = await readFileBuffer(file);
       const hash = md5.base64(fileBuffer);
       const dimensions = await readImageDimensions(file);
-      
+
       const { url, fields, id } = await getPresignedUrl(hash, dimensions, description);
       await uploadFile(file, url, fields);
       window.alert("Image uploaded successfully.");
@@ -102,4 +110,4 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
   return <button onClick={uploadHandler}>Submit</button>;
 };
 
-export { SelectButton, InputField, UploadButton };
+export { SelectFileButton, UploadButton };

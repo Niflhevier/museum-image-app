@@ -1,8 +1,9 @@
 import "./App.css";
-import { SelectButton, InputField, UploadButton } from "./Components/Form";
+import { SelectFileButton, UploadButton } from "./Components/Upload";
+import { InputField } from "./Components/InputField";
 import { QrCodeImage, QrCodeScanner } from "./Components/QrCode";
-import { ImageFromUrl } from "./Components/Image";
-import { navEnum, NavgationBar } from "./Components/NavgationBar";
+import { PreviewImage, ImageFromUrl } from "./Components/Image";
+import { navEnum, NavgationBar } from "./Components/Navgation";
 import { SearchButton } from "./Components/Search";
 
 import React, { useEffect, useState } from "react";
@@ -15,10 +16,10 @@ const UploadComponent = () => {
   return (
     <div className="App-Upload">
       {!fileId ? <h2>Upload an Image</h2> : <h2>Save Your QR Code</h2>}
-      {!fileId && <SelectButton setFile={setFile} setFileId={setFileId} />}
+      {!fileId && <SelectFileButton setFile={setFile} setFileId={setFileId} />}
       {file && (
         <div className="container">
-          <img src={URL.createObjectURL(file)} alt="Preview" />
+          <PreviewImage file={file} />
           <InputField file={file} description={description} setDescription={setDescription} />
           <UploadButton
             file={file}
@@ -63,7 +64,7 @@ const SearchComponent = () => {
         <SearchButton searchDescription={searchDescription} setSearchResult={setSearchResult} />
       </div>
       {searchResult.length !== 0 && (
-        <ul className="image-list">
+        <ul className="images-container">
           {searchResult.map(({ id }) => (
             <li key={id}>
               <ImageFromUrl id={id} verbose={false} />
@@ -95,7 +96,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Museum Image App</h1>
+      <h1>Museum Image</h1>
       <NavgationBar nav={nav} setNav={setNav} />
       <hr />
       <div className={nav === navEnum.UPLOAD ? "show" : "hide"}>

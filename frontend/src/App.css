@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: "Open Sans";
 }
 
 .App-Upload {
@@ -26,10 +25,6 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-}
-
-.App-Search .container{
-  width: 50%;
 }
 
 h2 {
@@ -94,7 +89,6 @@ img {
   border-radius: 0.5rem;
   margin: 0.75rem;
 }
-
 svg {
   max-width: 100%;
   height: auto;
@@ -229,29 +223,26 @@ nav {
   align-items: center;
   justify-content: center;
   width: 100%;
+  margin-bottom: 0.5rem;
 }
 
-.search-bar input {
-  width: 40%;
-}
-
-.image-list {
+.images-container {
   background-color: aliceblue;
   margin: 0.75rem;
   border-radius: 0.5rem;
   padding: 0.5rem;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
   list-style-type: none;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  width: 75%;
+  max-width: 75%;
   text-decoration: none;
   overflow-x: auto;
   justify-content: center;
 }
 
-.image-list li {
+.images-container li {
   border-radius: 0.5rem;
   padding: 0.5rem;
 }
