@@ -1,3 +1,6 @@
+/**
+ * This component renders a search button.
+ */
 const SearchButton = ({ searchDescription, setSearchResult }) => {
   const searchHandler = async () => {
     try {

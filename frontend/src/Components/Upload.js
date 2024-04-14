@@ -1,6 +1,10 @@
 import React from "react";
 import md5 from "js-md5";
 
+
+/**
+ * SelectFileButton component allows the user to select a file and handles the file selection event.
+ */
 const SelectFileButton = ({ setFile, setFileId }) => {
   const fileChangedHandler = async (event) => {
     const file = event.target.files[0];
@@ -27,6 +31,12 @@ const SelectFileButton = ({ setFile, setFileId }) => {
   return <input type="file" accept="image/png" onChange={fileChangedHandler} />;
 };
 
+/**
+ * Reads the contents of a file as an ArrayBuffer.
+ *
+ * @param {File} file - The file to read.
+ * @returns {Promise<ArrayBuffer>} A promise that resolves with the file's contents as an ArrayBuffer.
+ */
 const readFileBuffer = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -37,6 +47,11 @@ const readFileBuffer = (file) =>
     reader.readAsArrayBuffer(file);
   });
 
+/**
+ * Reads the dimensions of an image file.
+ * @param {File} file - The image file to read.
+ * @returns {Promise<{width: number, height: number}>} - A promise that resolves to an object containing the width and height of the image.
+ */
 const readImageDimensions = async (file) => {
   const image = new Image();
   try {
@@ -48,6 +63,15 @@ const readImageDimensions = async (file) => {
   }
 };
 
+/**
+ * Retrieves a presigned URL for uploading an image.
+ *
+ * @param {string} hash - The hash of the image.
+ * @param {string} dimensions - The dimensions of the image.
+ * @param {string} description - The description of the image.
+ * @returns {Promise<Object>} - A promise that resolves to the presigned URL.
+ * @throws {Error} - If fetching the presigned URL fails.
+ */
 const getPresignedUrl = async (hash, dimensions, description) => {
   const response = await fetch("/api/v1/upload", {
     method: "POST",
@@ -60,6 +84,13 @@ const getPresignedUrl = async (hash, dimensions, description) => {
   return await response.json();
 };
 
+/**
+ * Uploads a file to a specified URL using FormData.
+ * @param {File} file - The file to be uploaded.
+ * @param {string} url - The URL to upload the file to.
+ * @param {Object} fields - Additional fields to include in the request.
+ * @throws {Error} If the file fails to upload to S3.
+ */
 const uploadFile = async (file, url, fields) => {
   const formData = new FormData();
   for (const key in fields) {
@@ -73,6 +104,9 @@ const uploadFile = async (file, url, fields) => {
   }
 };
 
+/**
+ * UploadButton component for uploading images.
+ */
 const UploadButton = ({ file, setFile, description, setDescription, setFileId }) => {
   const validateImage = (file) => {
     if (!file) {

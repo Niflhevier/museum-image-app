@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+/**
+ * This component renders a preview of an image.
+ */
 const PreviewImage = ({ file }) => {
   const [image, setImage] = useState(null);
 
@@ -16,7 +19,11 @@ const PreviewImage = ({ file }) => {
   return <img src={image} alt="" />;
 };
 
-const ImageFromUrl = ({ id, verbose }) => {
+
+/**
+ * This component renders an image based on the provided ID.
+ */
+const ImageFromID = ({ id, verbose }) => {
   const [file, setFile] = useState(null);
   const [description, setDescription] = useState("");
 
@@ -32,7 +39,7 @@ const ImageFromUrl = ({ id, verbose }) => {
         setFile(data);
         setDescription(description);
       } catch (error) {
-        // May acknowledge the server that the image is not found
+        // may acknowledge the server that the image is not found
         console.error(error);
         setDescription("Failed to get the image. The image may not exist.");
       }
@@ -50,4 +57,4 @@ const ImageFromUrl = ({ id, verbose }) => {
   );
 };
 
-export { PreviewImage, ImageFromUrl };
+export { PreviewImage, ImageFromID };

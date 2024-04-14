@@ -3,6 +3,10 @@ import { useRef, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
+
+/**
+ * This component renders a QR code image component.
+ */
 const QrCodeImage = ({ content }) => {
   const qrCodeRef = useRef();
   const handlePrint = useReactToPrint({
@@ -16,7 +20,10 @@ const QrCodeImage = ({ content }) => {
   );
 };
 
-// Source: https://github.com/scanapp-org/html5-qrcode-react
+/**
+ * This component renders a QR code scanner.
+ * Source: https://github.com/scanapp-org/html5-qrcode-react
+ */
 const ScanQrcodePlugin = (props) => {
   const ref = useRef(null);
   const config = {
@@ -48,6 +55,9 @@ const ScanQrcodePlugin = (props) => {
   return <div id="reader" />;
 };
 
+/**
+ * This component is a warp around for ScanQrcodePlugin component.
+ */
 const QrCodeScanner = ({ setScannedFileId, setIsScanning }) => {
   const successCallback = (decodedText, decodedResult) => {
     setScannedFileId(decodedText);

@@ -6,6 +6,9 @@ const navEnum = {
   SEARCH: 2,
 };
 
+/**
+ * This component renders a navigation bar.
+ */
 const NavgationBar = ({ setNav }) => {
   return (
     <nav className="nav-container">
