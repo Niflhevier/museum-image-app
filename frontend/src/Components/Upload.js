@@ -69,7 +69,7 @@ const readImageDimensions = async (file) => {
  * @param {string} hash - The hash of the image.
  * @param {string} dimensions - The dimensions of the image.
  * @param {string} description - The description of the image.
- * @returns {Promise<Object>} - A promise that resolves to the presigned URL.
+ * @returns {Promise<{url: String, fields: Object, id: String}>} - A promise that resolves to the presigned URL.
  * @throws {Error} - If fetching the presigned URL fails.
  */
 const getPresignedUrl = async (hash, dimensions, description) => {
@@ -129,8 +129,7 @@ const UploadButton = ({ file, setFile, description, setDescription, setFileId })
       return;
     }
     try {
-      const fileBuffer = await readFileBuffer(file);
-      const hash = md5.base64(fileBuffer);
+      const hash = md5.base64(await readFileBuffer(file));
       const dimensions = await readImageDimensions(file);
 
       const { url, fields, id } = await getPresignedUrl(hash, dimensions, description);

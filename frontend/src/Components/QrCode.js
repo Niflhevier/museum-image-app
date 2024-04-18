@@ -9,9 +9,11 @@ import { Html5QrcodeScanner } from "html5-qrcode";
  */
 const QrCodeImage = ({ content }) => {
   const qrCodeRef = useRef();
+
   const handlePrint = useReactToPrint({
     content: () => qrCodeRef.current,
   });
+
   return (
     <div className="qrcode-container">
       <QRCode value={content} ref={qrCodeRef} />
@@ -26,6 +28,7 @@ const QrCodeImage = ({ content }) => {
  */
 const ScanQrcodePlugin = (props) => {
   const ref = useRef(null);
+
   const config = {
     fps: props.fps ?? 10,
     qrbox: props.qrbox ?? 250,
@@ -52,6 +55,7 @@ const ScanQrcodePlugin = (props) => {
       });
     };
   }, []);
+  
   return <div id="reader" />;
 };
 

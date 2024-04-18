@@ -9,6 +9,7 @@ const PreviewImage = ({ file }) => {
   useEffect(() => {
     const img = new Image();
     img.src = URL.createObjectURL(file);
+    // prevent loading the image if it's not an image
     img
       .decode()
       .then(() => setImage(img.src))
