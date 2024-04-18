@@ -94,8 +94,6 @@ const deleteByObjectId = async (objectId) => {
   } catch (err) {
     console.error("Elasticsearch Error:", err.message);
   }
-
-  return null;
 }
 
 module.exports = { collection, searchByDescription, deleteByObjectId, uploadDocument };
