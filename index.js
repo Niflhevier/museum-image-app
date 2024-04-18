@@ -54,14 +54,6 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     return res.status(400).json({ error: "Invalid request body!" });
   }
 
-  // special case for searching description with empty string, ref: https://stackoverflow.com/a/59020777
-  const emptyQuery = {
-    bool: { must: { exists: { field: "description" } }, must_not: [{ wildcard: { description: "*" } }] },
-  };
-  const normalQuery = {
-    bool: { should: [{ match: { description: description } }, { fuzzy: { description: { value: description, fuzziness: "AUTO" } } },], },
-  };
-
   try {
     const result = await searchByDescription(description);
 
