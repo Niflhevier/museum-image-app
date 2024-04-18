@@ -66,17 +66,17 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     const result = await searchByDescription(description);
 
     // for all search results, check if the result exists in S3 bucket
-    const hits = await Promise.all(result.map(async (document) => {
+    const response = await Promise.all(result.map(async (document) => {
       const exists = await checkFileExists(document.id);
       if (!exists) { await deleteByObjectId(new ObjectId(document.id)) };
       return exists ? document : null;
     })).then(results => results.filter(hit => hit));
 
-    if (hits.length === 0) {
+    if (response.length === 0) {
       return res.status(404).json({ error: "No result found!" });
     }
 
-    res.json({ result: hits });
+    res.json({ result: response });
   }
   catch (err) {
     return res.status(400).json({ error: "Search Error!" });
