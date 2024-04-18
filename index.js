@@ -1,5 +1,5 @@
 const { createPresignedPostUrl, createPresignedGetUrl, checkFileExists } = require("./modules/s3");
-const { collection, elasticClient, deleteByObjectId, uploadDocument } = require("./modules/db");
+const { collection, searchByDescription, deleteByObjectId, uploadDocument } = require("./modules/db");
 const express = require("express");
 const createError = require("http-errors");
 const { ObjectId } = require("mongodb");
@@ -54,7 +54,7 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     return res.status(400).json({ error: "Invalid request body!" });
   }
 
-  // special case for description with empty string, ref: https://stackoverflow.com/a/59020777
+  // special case for searching description with empty string, ref: https://stackoverflow.com/a/59020777
   const emptyQuery = {
     bool: { must: { exists: { field: "description" } }, must_not: [{ wildcard: { description: "*" } }] },
   };
@@ -62,23 +62,25 @@ app.post("/api/v1/search", express.json(), async (req, res) => {
     bool: { should: [{ match: { description: description } }, { fuzzy: { description: { value: description, fuzziness: "AUTO" } } },], },
   };
 
-  const result = await elasticClient.search({
-    index: "mongo-images-metadata",
-    query: description ? normalQuery : emptyQuery,
-  });
+  try {
+    const result = await searchByDescription(description);
 
-  // check if the file exists in S3 from the search result
-  const hits = await Promise.all(result.hits.hits.map(async (hit) => {
-    const exists = await checkFileExists(hit._source.id);
-    if (!exists) { await deleteByObjectId(new ObjectId(hit._source.id)) };
-    return exists ? hit._source : null;
-  })).then(results => results.filter(hit => hit));
+    // for all search results, check if the result exists in S3 bucket
+    const hits = await Promise.all(result.map(async (document) => {
+      const exists = await checkFileExists(document.id);
+      if (!exists) { await deleteByObjectId(new ObjectId(document.id)) };
+      return exists ? document : null;
+    })).then(results => results.filter(hit => hit));
 
-  if (hits.length === 0) {
-    return res.status(404).json({ error: "No result found!" });
+    if (hits.length === 0) {
+      return res.status(404).json({ error: "No result found!" });
+    }
+
+    res.json({ result: hits });
   }
-
-  res.json({ result: hits });
+  catch (err) {
+    return res.status(400).json({ error: "Search Error!" });
+  }
 });
 
 app.use(function (req, res, next) {

@@ -62,6 +62,22 @@ const uploadDocument = async (objectId, document) => {
   return true;
 };
 
+const searchByDescription = async (description) => {
+  const emptyQuery = {
+    bool: { must: { exists: { field: "description" } }, must_not: [{ wildcard: { description: "*" } }] },
+  };
+  const normalQuery = {
+    bool: { should: [{ match: { description: description } }, { fuzzy: { description: { value: description, fuzziness: "AUTO" } } },], },
+  };
+
+  const result = await elasticClient.search({
+    index: "mongo-images-metadata",
+    query: description ? normalQuery : emptyQuery,
+  });
+
+  return result.hits.hits.map((hit) => hit._source);
+}
+
 const deleteByObjectId = async (objectId) => {
   console.log("Deleting", objectId, "from MongoDB and Elasticsearch.");
   try {
@@ -80,4 +96,4 @@ const deleteByObjectId = async (objectId) => {
   }
 }
 
-module.exports = { collection, elasticClient, deleteByObjectId, uploadDocument };
+module.exports = { collection, searchByDescription, deleteByObjectId, uploadDocument };
